@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ble-radar"
+version = "0.1.0"
+description = "A live radar for the Bluetooth environment around you — RSSI, device lifecycles, recording and session replay"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "bleak>=0.22",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+ble-radar = "ble_radar.cli:main"
+
+[tool.setuptools]
+packages = ["ble_radar"]
