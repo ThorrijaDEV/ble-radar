@@ -176,6 +176,6 @@ export, and a pure renderer that makes the UI testable.
 
 ## License
 
-MIT — pending final review before the first public release
-(the license file will be added once dependencies and attribution are
-confirmed).
+MIT — see [LICENSE](LICENSE). The implementation is independent; upstream
+projects (see Inspiration & attribution) are Apache-2.0/MIT/GPL and were
+studied for ideas only, no code reused.
