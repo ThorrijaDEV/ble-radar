@@ -3,10 +3,53 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 
 from ble_radar import db as dbmod
+from ble_radar import __version__
 from ble_radar.cli import EXIT_ERROR, EXIT_OK, _replay_from, main
 from ble_radar.scan import Observation
+
+
+class TestInvocation:
+    """The CLI must stay invocable (module fallback) — regression for the
+    'ble-radar: command not found' report: the entry point lives in the
+    venv, so `python -m ble_radar` is the documented fallback."""
+
+    def _run(self, *argv, env=None):
+        env_full = dict(os.environ)
+        env_full.pop("BLE_RADAR_DB", None)
+        if env:
+            env_full.update(env)
+        return subprocess.run(
+            [sys.executable, "-m", "ble_radar", *argv],
+            capture_output=True,
+            text=True,
+            timeout=60,
+            env=env_full,
+        )
+
+    def test_module_version(self):
+        p = self._run("--version")
+        assert p.returncode == 0
+        assert __version__ in p.stdout
+
+    def test_module_status(self, tmp_path):
+        p = self._run("status", env={"BLE_RADAR_DB": str(tmp_path / "r.db")})
+        assert p.returncode == 0
+        assert "database" in p.stdout
+
+    def test_module_sessions_empty(self, tmp_path):
+        p = self._run("sessions", env={"BLE_RADAR_DB": str(tmp_path / "r.db")})
+        assert p.returncode == 0
+        assert "no sessions" in p.stdout
+
+    def test_module_help(self):
+        p = self._run("--help")
+        assert p.returncode == 0
+        assert "radar" in p.stdout
 
 
 class TestReplayFrom:

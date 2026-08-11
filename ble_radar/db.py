@@ -92,6 +92,12 @@ def end_session(conn: sqlite3.Connection, session_id: int, observations: int) ->
     conn.commit()
 
 
+def delete_session(conn: sqlite3.Connection, session_id: int) -> None:
+    """Remove a session that never really ran (e.g. aborted before startup)."""
+    conn.execute("DELETE FROM sessions WHERE id = ?", (session_id,))
+    conn.commit()
+
+
 def record_observation(
     conn: sqlite3.Connection, session_id: int | None, obs: Observation
 ) -> None:

@@ -76,6 +76,14 @@ git clone https://github.com/ThorrijaDEV/ble-radar
 cd ble-radar
 python -m venv .venv
 .venv/bin/pip install -e .        # or: pip install -e .[dev]  (for tests)
+source .venv/bin/activate         # puts the `ble-radar` command on your PATH
+```
+
+Not activating the venv? Use `python -m ble_radar radar` instead, or link the
+entry point into a PATH directory once:
+
+```sh
+ln -s "$PWD/.venv/bin/ble-radar" ~/.local/bin/ble-radar
 ```
 
 ## Usage

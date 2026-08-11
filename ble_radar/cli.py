@@ -203,15 +203,21 @@ def cmd_radar(args) -> int:
         finally:
             scanner.stop()
 
+    ok = False
     try:
         code = curses.wrapper(run)
+        ok = True
     except Exception as e:
         print(f"error: {e}", file=sys.stderr)
-        return EXIT_ERROR
     finally:
         if session_id is not None:
-            dbmod.end_session(conn, session_id, count)
+            if ok:
+                dbmod.end_session(conn, session_id, count)
+            else:
+                dbmod.delete_session(conn, session_id)
         conn.close()
+    if not ok:
+        return EXIT_ERROR
     print(f"\nsession stored: {count} observations ({backend_name})")
     return code
 
@@ -426,15 +432,21 @@ def cmd_demo(args) -> int:
         finally:
             scanner.stop()
 
+    ok = False
     try:
         code = curses.wrapper(run)
+        ok = True
     except Exception as e:
         print(f"error: {e}", file=sys.stderr)
-        return EXIT_ERROR
     finally:
         if session_id is not None:
-            dbmod.end_session(conn, session_id, count)
+            if ok:
+                dbmod.end_session(conn, session_id, count)
+            else:
+                dbmod.delete_session(conn, session_id)
         conn.close()
+    if not ok:
+        return EXIT_ERROR
     print(f"\ndemo session stored: {count} observations")
     return code
 

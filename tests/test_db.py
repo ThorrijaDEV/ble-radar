@@ -55,6 +55,14 @@ class TestSessions:
         ids = [r["id"] for r in dbmod.list_sessions(conn)]
         assert ids == [s2, s1]
 
+    def test_delete_session(self, conn):
+        s1 = dbmod.start_session(conn, "keep")
+        s2 = dbmod.start_session(conn, "aborted")
+        dbmod.delete_session(conn, s2)
+        ids = [r["id"] for r in dbmod.list_sessions(conn)]
+        assert ids == [s1]
+        assert conn.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 1
+
     def test_session_device_count(self, conn):
         sid = dbmod.start_session(conn, "x")
         dbmod.record_observation(conn, sid, _obs("aa:bb:cc:dd:ee:01"))
